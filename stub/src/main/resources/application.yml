@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: perf-stub
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: perf-stub-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/perf_db}
+    username: ${SPRING_DATASOURCE_USERNAME:perf_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:perf_pass}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+app:
+  kafka:
+    topic-in: message-in
+    topic-out: message-out
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: perf-stub
+    enable:
+      jvm: true
+      process: true
+      system: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.perftask.stub: INFO

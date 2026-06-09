@@ -1,0 +1,86 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Использование heap-памяти JVM заглушки (байты). Показывает текущую нагрузку на память приложения.",
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\", job=\"spring-stub\"}",
+          "legendFormat": "{{id}}"
+        }
+      ],
+      "title": "JVM Heap Used",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Количество живых потоков JVM. Рост может указывать на утечку потоков или рост параллелизма.",
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads{job=\"spring-stub\"}",
+          "legendFormat": "live threads"
+        }
+      ],
+      "title": "JVM Live Threads",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Паузы сборщика мусора (GC). Длительные паузы влияют на latency обработки Kafka-сообщений.",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_pause_seconds_sum{job=\"spring-stub\"}[1m])",
+          "legendFormat": "{{action}}"
+        }
+      ],
+      "title": "JVM GC Pause Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Загрузка CPU процессом JVM (system + process). Помогает оценить вычислительную нагрузку заглушки.",
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "process_cpu_usage{job=\"spring-stub\"}",
+          "legendFormat": "process"
+        },
+        {
+          "expr": "system_cpu_usage{job=\"spring-stub\"}",
+          "legendFormat": "system"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["jvm", "spring-boot", "perf-task"],
+  "templating": { "list": [] },
+  "time": { "from": "now-30m", "to": "now" },
+  "title": "Spring Stub — JVM Metrics",
+  "uid": "perf-jvm-stub",
+  "version": 1
+}

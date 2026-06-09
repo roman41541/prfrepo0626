@@ -1,0 +1,67 @@
+# =========================
+# Build outputs
+# =========================
+build/
+target/
+out/
+
+# Gradle
+.gradle/
+**/.gradle/
+
+# Module builds
+gatling/build/
+stub/build/
+
+# =========================
+# Gatling
+# =========================
+gatling/results/
+
+# =========================
+# Binaries / executables
+# =========================
+gatling/bin/gatling
+stub/bin/main
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# JVM dumps
+*.hprof
+dumps/
+heap-dumps/
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+*.secret
+*.key
+
+# =========================
+# IDE
+# =========================
+.idea/
+*.iml
+.vscode/
+
+# Vim
+*.swp
+*.swo
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Keep Gradle wrapper
+# =========================
+!gradle/wrapper/gradle-wrapper.jar
+
+README.md

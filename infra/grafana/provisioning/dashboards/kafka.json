@@ -1,0 +1,336 @@
+{
+    "annotations": {
+      "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Количество доступных брокеров Kafka. Если значение падает — exporter не видит часть кластера или брокеры недоступны.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_brokers{job=\"kafka-exporter\"}",
+            "legendFormat": "brokers"
+          }
+        ],
+        "title": "Kafka Brokers Count",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Количество partition по топикам Kafka.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_topic_partitions{job=\"kafka-exporter\"}",
+            "legendFormat": "{{topic}}"
+          }
+        ],
+        "title": "Topic Partition Count",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Скорость поступления сообщений в Kafka topics (messages/sec). Рассчитывается по росту offsets.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 8
+        },
+        "id": 3,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(kafka_topic_partition_current_offset{job=\"kafka-exporter\"}[1m])) by (topic)",
+            "legendFormat": "{{topic}}"
+          }
+        ],
+        "title": "Topic Message Rate (RPS)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Lag consumer group по partition. Рост lag означает, что consumers не успевают обрабатывать сообщения.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_consumergroup_lag{job=\"kafka-exporter\"}",
+            "legendFormat": "{{consumergroup}} / {{topic}} / p{{partition}}"
+          }
+        ],
+        "title": "Consumer Group Lag",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Суммарный lag по consumer groups.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "id": 5,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "sum(kafka_consumergroup_lag_sum{job=\"kafka-exporter\"}) by (consumergroup)",
+            "legendFormat": "{{consumergroup}}"
+          }
+        ],
+        "title": "Total Consumer Group Lag",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Количество реплик у partition. Позволяет контролировать отказоустойчивость Kafka-кластера.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "id": 6,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_topic_partition_replicas{job=\"kafka-exporter\"}",
+            "legendFormat": "{{topic}} / p{{partition}}"
+          }
+        ],
+        "title": "Partition Replicas",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Количество ISR (in-sync replicas) по partition. Если ISR меньше replication factor — есть проблемы с репликацией.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_topic_partition_in_sync_replica{job=\"kafka-exporter\"}",
+            "legendFormat": "{{topic}} / p{{partition}}"
+          }
+        ],
+        "title": "In-Sync Replicas (ISR)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Количество активных consumer groups.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 32
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "count(kafka_consumergroup_members{job=\"kafka-exporter\"})",
+            "legendFormat": "consumer groups"
+          }
+        ],
+        "title": "Consumer Groups Count",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "Количество участников consumer groups.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 32
+        },
+        "id": 9,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_consumergroup_members{job=\"kafka-exporter\"}",
+            "legendFormat": "{{consumergroup}}"
+          }
+        ],
+        "title": "Consumer Group Members",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 39,
+    "tags": [
+      "kafka",
+      "kafka-exporter",
+      "prometheus",
+      "perf-task"
+    ],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "title": "Kafka Exporter — Cluster Metrics",
+    "uid": "perf-kafka-exporter",
+    "version": 1
+  }
