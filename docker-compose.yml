@@ -55,33 +55,40 @@ services:
       POSTGRES_DB: perf_db
       POSTGRES_USER: perf_user
       POSTGRES_PASSWORD: perf_pass
-    volumes:
-      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U perf_user -d perf_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  stub:
-    build: ./stub
-    container_name: perf-stub
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/perf_db
-      SPRING_DATASOURCE_USERNAME: perf_user
-      SPRING_DATASOURCE_PASSWORD: perf_pass
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
+stub:
+  build: ./stub
+  container_name: perf-stub
+  depends_on:
+    kafka:
+      condition: service_healthy
+    postgres:
+      condition: service_healthy
+  environment:
+    SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/perf_db
+    SPRING_DATASOURCE_USERNAME: perf_user
+    SPRING_DATASOURCE_PASSWORD: perf_pass
+    # JVM настройки
+    JAVA_OPTS: >-
+      -Xmx750m
+      -XX:+HeapDumpOnOutOfMemoryError
+      -XX:HeapDumpPath=/tmp/heapdump.hprof
+      -XX:+UseG1GC
+      -XX:MaxGCPauseMillis=200
+  healthcheck:
+    test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+    interval: 15s
+    timeout: 5s
+    retries: 10
+    start_period: 60s
+  volumes:
+    - ./heapdumps:/tmp
 
   prometheus:
     image: prom/prometheus:v2.54.1
@@ -102,3 +109,9 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+
+  pushgateway:
+    image: prom/pushgateway:v1.6.0
+    container_name: pushgateway
+    ports:
+      - "9091:9091"

@@ -9,7 +9,16 @@ scrape_configs:
       - targets: ["kafka-exporter:9308"]
 
   - job_name: spring-stub
-    metrics_path: /actuator/prometheus
     static_configs:
-      - targets:
-          - stub:8080
+      - targets: ["stub:8080"]
+    metrics_path: /actuator/prometheus
+
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+    metric_relabel_configs:
+      # Drop all pushgateway internal metrics
+      - source_labels: [__name__]
+        regex: 'pushgateway_.*|go_.*|process_.*|promhttp_.*'
+        action: drop
