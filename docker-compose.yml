@@ -61,34 +61,34 @@ services:
       timeout: 5s
       retries: 5
 
-stub:
-  build: ./stub
-  container_name: perf-stub
-  depends_on:
-    kafka:
-      condition: service_healthy
-    postgres:
-      condition: service_healthy
-  environment:
-    SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/perf_db
-    SPRING_DATASOURCE_USERNAME: perf_user
-    SPRING_DATASOURCE_PASSWORD: perf_pass
-    # JVM настройки
-    JAVA_OPTS: >-
-      -Xmx750m
-      -XX:+HeapDumpOnOutOfMemoryError
-      -XX:HeapDumpPath=/tmp/heapdump.hprof
-      -XX:+UseG1GC
-      -XX:MaxGCPauseMillis=200
-  healthcheck:
-    test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
-    interval: 15s
-    timeout: 5s
-    retries: 10
-    start_period: 60s
-  volumes:
-    - ./heapdumps:/tmp
+  stub:
+    build: ./stub
+    container_name: perf-stub
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/perf_db
+      SPRING_DATASOURCE_USERNAME: perf_user
+      SPRING_DATASOURCE_PASSWORD: perf_pass
+      # JVM настройки
+      JAVA_OPTS: >-
+        -Xmx750m
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:HeapDumpPath=/tmp/heapdumps/heapdump.hprof
+        -XX:+UseG1GC
+        -XX:MaxGCPauseMillis=200
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    volumes:
+      - ./heapdumps:/tmp/heapdumps
 
   prometheus:
     image: prom/prometheus:v2.54.1
